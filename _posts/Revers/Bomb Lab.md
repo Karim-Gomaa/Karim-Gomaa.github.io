@@ -6,7 +6,7 @@ header:
 ribbon: DodgerBlue
 description: "Solution for PMA Ch-5 ..."
 categories:
-  - Revers
+  - Reverse
 toc: true
 ---
 
