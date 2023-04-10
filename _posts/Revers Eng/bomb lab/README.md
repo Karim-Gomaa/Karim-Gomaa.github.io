@@ -18,7 +18,9 @@ toc: true
 ### Before solvinig the lab
 
 Before solving the lab yoou have first to know some information about the lab to get we use **" file bomb"**
+
 ![codedtext](/assets/images/Revers%20Eng/bomb%20lab/pics/1.png)
+
 from that we knew 
 1. The file is **x86-64 architecture** 
 2. It's **dynamically linked** 
@@ -31,6 +33,7 @@ which means that functions' names are  not hidden
 Here I used ***IDA*** as disassembler
 
 After running our bomb in ***IDA*** and heading to the main we see this. 
+
 ![main](/assets/images/Revers%20Eng/bomb%20lab/pics/main.png)
 
 Aa a quick look we find that we have 6 phases to solve 
@@ -56,9 +59,11 @@ which tace an input as 6 integers then compare the first one with **"1"** which 
 
 Then enter a loop or explode bomb **"jnz"**
 if zero flag is set then continue if equal zero then explode bomb
+
 ![phase2-2](/assets/images/Revers%20Eng/bomb%20lab/pics/phase2-2.png)
 
 here we get into the loop
+
 ![phase2-3](/assets/images/Revers%20Eng/bomb%20lab/pics/phase2-3.png)
 
 we move **"eax"** into **"rbx"** then add **"eax"** to itself
@@ -79,37 +84,55 @@ here is a switch case
 if the first is above 7 it will explode bomb else it will enter the switch using the first input 
 here is the most complicated part,I will start with number 4 
 so we will jumb to case 4
+
 ![case4-1](/assets/images/Revers%20Eng/bomb%20lab/pics/phase3-case4-1.png)
+
 here we put zero into ***"eax"***
+
 ![case4-2](/assets/images/Revers%20Eng/bomb%20lab/pics/phase3-case4-2.png)
+
 add 0x7E to 0 then we have 0x7E in our REG
+
 ![case4-3](/assets/images/Revers%20Eng/bomb%20lab/pics/phase3-case4-3.png)
+
 subtract 0x7E then we have 0 in our REG
+
 ![case4-4](/assets/images/Revers%20Eng/bomb%20lab/pics/phase3-case4-4.png)
+
 add 0x7E to 0 then we have 0x7E in our REG
+
 ![case4-5](/assets/images/Revers%20Eng/bomb%20lab/pics/phase3-case4-5.png)
+
 subtract 0x7E then we have 0 in our REG
 so our final comparison
+
 ![phase3-3](/assets/images/Revers%20Eng/bomb%20lab/pics/phase3-3.png)
+
 compare the first input with 5
 so we have a new condition that the frist input must be less than or equal to 5 
 for every number there is another case to second one 
+
 ![phase3-4](/assets/images/Revers%20Eng/bomb%20lab/pics/phase3-4.png)
+
 the second condition is that the second input must equal the value in eax 
 in my case it's **"4 0"**  I will let you try the others
 
 ### Phase 4
+
 ![phase4-1](/assets/images/Revers%20Eng/bomb%20lab/pics/phase4-1.png)
 
 Here we find **scanf** again and we know again that we have two integers 
 
 ![phase4-2](/assets/images/Revers%20Eng/bomb%20lab/pics/phase4-2.png)
+
 here he just cheks that first input is less than **14**
 
 then we enter **fun4** taking 3 arguments (first inpute,0,14)
 
 then there is some maths are done  
+
 ![phase4-3](/assets/images/Revers%20Eng/bomb%20lab/pics/phase4-3.png)
+
 ![phase4-4](/assets/images/Revers%20Eng/bomb%20lab/pics/phase4-4.png)
 
 As a conclusion from those two conditions that the returne of the function must equal 10 and the second inpute must be 10 as will
@@ -118,6 +141,7 @@ now you have two options you can follow the maths or bruteforce it using any scr
 the two wayes lead you to **"3 10"**
 
 ### Phase 5
+
 ![phase5-1](/assets/images/Revers%20Eng/bomb%20lab/pics/phase5-1.png)
 
 One more time with **scanf** and again two integers
@@ -132,6 +156,7 @@ the two wayes lead you to **"5 115"**
 ### Phase 6
 
 Our final phase and the hardest one 
+
 ![phase6-1](/assets/images/Revers%20Eng/bomb%20lab/pics/phase6-1.png)
 
 Ha Ha **"read_six_numbers"** from **Phase 2** again
@@ -150,9 +175,12 @@ Here we find structure called **"node1"**
 on investigating into it we find 
 
 ![phase6-4](/assets/images/Revers%20Eng/bomb%20lab/pics/phase6-4.png)
+
 there are three numbers but we are interested in 2 only
 the first is **212** and it's the value of the node and second is **1** and it's the label so by checking the others  we can make this table
+
 ![phase6-5](/assets/images/Revers%20Eng/bomb%20lab/pics/phase6-5.png)
+
 by reordering those numbers descendingly
 we find our pass is (**5 4 3 1 6 2**)
 
