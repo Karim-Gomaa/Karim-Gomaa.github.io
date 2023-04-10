@@ -4,17 +4,17 @@ main:
     url: /categories/#malware-analysis
   - title: "Revers"
     url: /categories/#Revers
+    - title: "CTF"
+    url: /categories/#ctf
+  - title: "All Categories"
+    url: /categories
+  
   - #title: "Forensic investigation"
     #url: /categories/#forensic-investigation
   #- title: "Mal-Docs"
    # url: /categories/#mal-docs
   - #title: "Offensive"
     #url: /categories/#offensive
-  - title: "CTF"
-    url: /categories/#ctf
-  - title: "All Categories"
-    url: /categories
-  
   # - title: "Sample Collections"
   #   url: /collection-archive/
   # - title: "Sitemap"
