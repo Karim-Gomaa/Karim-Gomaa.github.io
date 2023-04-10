@@ -2,10 +2,13 @@
 main:
   - title: "Malware Analysis"
     url: /categories/#malware-analysis
+    
   - title: "Revers"
     url: /categories/#Revers
-    - title: "CTF"
+  
+  - title: "CTF"
     url: /categories/#ctf
+  
   - title: "All Categories"
     url: /categories
   
