@@ -1,7 +1,7 @@
 # main links
 main:
   - title: "Malware Analysis"
-    url: /_posts/#malware-analysis
+    url: /categories/#malware-analysis
     
   - title: "Reverse"
     url: /categories/#Reverse
