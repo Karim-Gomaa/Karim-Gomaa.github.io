@@ -2,6 +2,8 @@
 main:
   - title: "Malware Analysis"
     url: /categories/#malware-analysis
+  - title: "Revers"
+    url: /categories/#Revers
   - #title: "Forensic investigation"
     #url: /categories/#forensic-investigation
   #- title: "Mal-Docs"
