@@ -2,7 +2,7 @@
 title: "PowerShell "
 classes: wide
 header:
- teaser: /assets/images/Tutorials/PS-Walk_Through/path.jpg
+  teaser: /assets/images/Tutorials/PS-Walk_Through/path.jpg
 ribbon: Green
 description: "Obfuscated PowerShell walk-through..."
 categories:
