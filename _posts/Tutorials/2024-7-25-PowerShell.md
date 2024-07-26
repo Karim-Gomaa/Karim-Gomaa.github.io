@@ -1,5 +1,5 @@
 ---
-title: "PowerShell "
+title: "PowerShell"
 classes: wide
 header:
   teaser: /assets/images/Tutorials/PS-Walk_Through/path.jpg
@@ -9,6 +9,7 @@ categories:
  - Tutorials
 toc: true
 ---
+
 
 ## Scenario
 Analyst!
