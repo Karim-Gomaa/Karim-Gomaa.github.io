@@ -140,7 +140,9 @@ try {
 To understand this let's break it into small parts, the code has four parts:
 
 1- Script Information Block: The initial block is a comment section providing metadata about the script such as version, author, GitHub repository, and donation address.
+
 2- Variable Initialization: $client, $stream, $buffer, $writer, $data, and $result are initialized to $null
+
 3- Try Catch Block:
 that's the most interesting block where the script tries to establish a TCP connection with C2.
 first set port and ip `10.10.115.13 : 1433` then establish TCP connection:
@@ -150,11 +152,9 @@ first set port and ip `10.10.115.13 : 1433` then establish TCP connection:
 - $encoding is set to ASCII encoding.
 - $writer is an IO.StreamWriter for writing data to the stream with AutoFlush set to $true.
 after that the script enters a do loop which continually prompts the remote user with "PS>" and waits for commands, reads incoming data from the stream into the buffer until no more data is available and converts the byte data to a string using ASCII encoding and appends it to **$data**.
-after that enters the inner loop, if $data is not empty, it attempts to execute the PowerShell command using Invoke-Expression, captures the output or exception into $result and finally clears $data.
+after that enters the inner loop, if $data is not empty, it attempts to execute the PowerShell command using Invoke-Expression, captures the output or exception into $result and finally clears $data. Of course, if there is an exception that is where the catch comes to act.
 
-Of course, if there is an exception that is where the catch comes to act.
-
-Finally Block: finally, loses and disposes of the writer, stream, client, and clears all variables and Forces garbage collection with  `[System.GC]::Collect()`.
+4- Final Block: finally, loses and disposes of the writer, stream, client, and clears all variables and Forces garbage collection with  `[System.GC]::Collect()`.
 
 ## Conclusion
 
