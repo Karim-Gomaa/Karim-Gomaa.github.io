@@ -97,7 +97,7 @@ I would like to mention that this challenge is insanely difficult and need a ski
 
 ### Scenario
 
-After incident, DFIR team recovered a file from hard disk, they thought this what started the infection. As Malware Analysis you are asked to analyze the file and find C2, Port, and Dropped 2nd stage full path.
+``` After an incident, the DFIR team recovered a file from the hard disk; they believed this was what had initiated the infection. As a Malware Analyst, you are asked to analyse the file and find the C2, Port, and the dropped 2nd-stage full path.```
 
 ### Solution Guide
 
@@ -137,5 +137,6 @@ Note that hashing algorithm and Deobfuscation function are hard coded you just n
 
 #### Written by
 ## *Karim Gomaa*
+
 
 
