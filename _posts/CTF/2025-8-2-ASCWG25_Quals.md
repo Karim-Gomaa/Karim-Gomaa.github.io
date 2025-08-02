@@ -88,7 +88,7 @@ By reversing this entire process—inverting the final transformation, decryptin
 
 **flag format** ***`{IP:Port_FilePath}`***
 
-**<span style="color: red;"> Note!!**</span>
+**<span style="color: red;"> Note!!</span>**
 `This file is real malware sample, don't try to run on you host machine.`
 
 #### <span style="color: red;">[challenge link](https://drive.google.com/file/d/1u0o0jOuVHoF37y6_RmMmb9_RTX43IGmo/view?usp=drive_link)</span>
@@ -137,4 +137,5 @@ Note that hashing algorithm and Deobfuscation function are hard coded you just n
 
 #### Written by
 ## *Karim Gomaa*
+
 
