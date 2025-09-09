@@ -183,11 +183,15 @@ ubuntu@cyber_assassin:~ $ file marauders_map.exe
 marauders_map.exe: PE32+ executable (console) x86-64, for MS Windows
 ```
 
-This indicates that the binary is a 64-bit Windows executable and cannot be directly executed in the current Ubuntu sandbox environment. Attempts to run it resulted in an "Exec format error".
+This indicates that the binary is a 64-bit Windows executable. Upon trying to run it, this only asks the user to enter some spell to defeat the magical object humming before him, with some random trials found that only a 25-character spell will make the program print this message
+```
+...The artifact glows for a moment, then fades.
+Mischief Managed!
+``` 
 
 ### Mapping High-Level Constructs to Assembly
 
-Before diving into a full disassembly analysis, it is beneficial to understand how the high-level language features of a modern, compiled language like Rust translate into assembly code. The `marauders_map.exe` binary, being a release build, is heavily optimized, which can sometimes obscure the original logic. However, by recognizing common patterns, we can infer the program's structure.
+Before diving into a full disassembly analysis, it is beneficial to understand how the high-level language features of a modern, compiled language like Rust translate into assembly code. The `marauders_map.exe` binary, being a release build, is heavily optimised, which can sometimes obscure the original logic. However, by recognising common patterns, we can infer the program's structure. It's important to note that this is a Rust binary, so before digging deeper, you will need to understand how Rust works.
 
 ### Rust's `main` function and Program Entry Point
 
@@ -195,7 +199,7 @@ In a typical Rust program, the `main` function serves as the entry point. The as
 
 ### String Handling and the `obfstr` Crate
 
-The `strings` output of the binary does not reveal the flag or the correct spell directly. This suggests that the strings are obfuscated. The use of a library like `obfstr` in Rust would explain this. At compile time, `obfstr` encrypts strings, and they are only decrypted at runtime. In the assembly, this would manifest as a function call that takes an encrypted byte array and a key, and returns the decrypted string. We can see evidence of this in the disassembly where byte arrays are manipulated before being printed to the console.
+The `strings` output of the binary does not reveal the flag or the correct spell directly. This suggests that the strings are obfuscated. The use of a library like `obfstr` in Rust would explain this. At compile time, `obfstr` encrypts strings, and they are only decrypted at runtime. In the assembly, this would manifest as a function call that takes an encrypted byte array and a key, and returns the decrypted string. We can see evidence of this in the disassembly, where byte arrays are manipulated before being printed to the console.
 
 ### The `perform_mischief` Macro: A Custom VM
 
@@ -209,7 +213,7 @@ In the assembly, this custom VM would be represented by:
 
 ### Memory Manipulation and the `MEMORY_MAP_SIZE`
 
-The program initializes a large block of memory (4096 bytes) and performs various operations on it based on the input spell. This memory block acts as the state of the custom VM. The disassembly shows that the program allocates a significant amount of memory on the stack or in the `.data` section, and then performs a series of reads and writes to this memory based on calculations involving the input characters and the instruction pointer. The modulo operations (`% MEMORY_MAP_SIZE`) in the source code would translate to `div` or `idiv` instructions in the assembly, which are used to calculate the offsets into this memory map.
+The program initialises a large block of memory (4096 bytes) and performs various operations on it based on the input spell. This memory block acts as the state of the custom VM. The disassembly shows that the program allocates a significant amount of memory on the stack or in the `.data` section, and then performs a series of reads and writes to this memory based on calculations involving the input characters and the instruction pointer. The modulo operations (`% MEMORY_MAP_SIZE`) in the source code would translate to `div` or `idiv` instructions in the assembly, which are used to calculate the offsets into this memory map.
 
 By understanding these high-level concepts and how they are likely to be represented in assembly, we can approach the disassembly with a more structured and informed perspective, allowing us to reverse engineer the complex logic of the `perform_mischief` routine and uncover the flag.
 
@@ -218,9 +222,9 @@ By understanding these high-level concepts and how they are likely to be represe
 
 ### Disassembly Analysis: Unveiling the Map's Secrets
 
-Our journey into the `marauders_map.exe` binary begins with a thorough examination of its disassembled code. While the raw assembly can appear daunting, understanding the compiler's optimizations and common programming patterns allows us to piece together the program's intricate logic. We will focus on identifying key functions, data structures, and the flow of control that governs the "spell" validation process.
+Our journey into the `marauders_map.exe` binary begins with a thorough examination of its disassembled code. While the raw assembly can appear daunting, understanding the compiler's optimisations and common programming patterns allows us to piece together the program's intricate logic. We will focus on identifying key functions, data structures, and the flow of control that governs the "spell" validation process.
 
-### Program Initialization and Output
+### Program Initialisation and Output
 
 The program's execution begins at its entry point, which eventually leads to a function analogous to a `main` function in high-level languages. This function is responsible for setting up the program's environment, displaying the initial thematic messages, and preparing for user interaction. We observe calls to functions that ultimately interface with the operating system's console output routines (e.g., `WriteFile` on Windows). The strings such as "Hogwarts Mystery: The Half-Blood Prince's Secret" and "Cast your spell:" are pushed onto the stack or loaded into registers before these output calls, indicating their role as display messages.
 
@@ -298,5 +302,6 @@ Upon successfully casting this spell, the program will output "Mischief Managed!
 
 #### Written by
 ## *Karim Gomaa*
+
 
 
