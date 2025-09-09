@@ -292,7 +292,7 @@ When this precise spell is provided, the "Mischief Engine" will execute the corr
 
 **The Correct Spell:** `It's_leviOsa_not_levioSA!`
 
-Upon successfully casting this spell, the program will output "Mischief Managed!" followed by the flag. 
+Upon successfully casting this spell, the program will decrypt and arrange the flag in the memory, then the memory will be destroyed. Breaking at the rigth place you will find the flag sparkling in front of you.
 
 **Flag:** `ASCWG{H0w_d@r3_you_use_my_sp3!ls_aga1nst_m3_Potter_Yes_I_@m_the_H@lf_Bl00d_Prince}`
 
@@ -302,6 +302,7 @@ Upon successfully casting this spell, the program will output "Mischief Managed!
 
 #### Written by
 ## *Karim Gomaa*
+
 
 
 
