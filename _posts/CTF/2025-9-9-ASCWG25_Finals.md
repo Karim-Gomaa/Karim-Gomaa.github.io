@@ -1,5 +1,5 @@
 ---
-title: "Arab Security Cyber WarGames Qualification phase 2025"
+title: "Arab Security Cyber WarGames Finals phase 2025"
 classes: wide
 header:
   teaser: /assets/images/CTF/ASCWG%20Quals/ASCWG.png
@@ -298,4 +298,5 @@ Upon successfully casting this spell, the program will output "Mischief Managed!
 
 #### Written by
 ## *Karim Gomaa*
+
 
