@@ -10,14 +10,14 @@ categories:
 toc: true
 ---
 
-Hello guys, I’ve had the honor to write the challenges for Arab Security Cyber WarGames (ASCWG). This is the writeup for the Finals round’s challenges. Let’s just jump right in.
+Hello guys, I’ve had the honor to write the challenges for Arab Security Cyber WarGames (ASCWG). This is the write-up for the Finals round’s challenges. Let’s just jump right in.
 
 
 # Lost_In_The_Dark
 
 ### Description
 
-***`"EzioAuditoredaFirenze" had used his name to hide a secret, but he doesn't know how to reveal it can you do this job?`***
+***`"EzioAuditoredaFirenze" had used his name to hide a secret, but he doesn't know how to reveal it. Can you do this job?`***
 
 #### <span style="color: red;">[challenge link](https://drive.google.com/file/d/17b8Syb-XhG0-Q0Gp2o3MhkRBfhCDwztd/view?usp=sharing)</span>
 
@@ -26,10 +26,10 @@ Upon receiving the `Bios.bin` file, the first step was to perform a basic file t
 
 ```bash
 ubuntu@cyber_assassin:~ $ file Bios.bin
-bios.bin : data
+Bios.bin : data
 
 ```
-Now, this first thing come in mind is that the file may contain some hidden or embedded files.
+Now, the first thing that comes to mind is that the file may contain some hidden or embedded files.
 
 Next, `binwalk` was considered for extracting potential embedded files or identifying known file signatures within the EFI module.
 
@@ -49,9 +49,9 @@ DECIMAL       HEXADECIMAL     DESCRIPTION
 4041176       0x3DA9D8        Unix path: /home/Wolf/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Sec/SecMain/DEBUG/SecMain.dll
 
 ```
-The `binwalk` output indicated a true treasure and tell important piece of information, this file is firmware image that contains UEFI module.
+The `binwalk` output indicated a true treasure and tells an important piece of information: this file is a firmware image that contains a UEFI module.
 
-Now the time comes, you can choose what you prefare but for me **UEFITool** is the perfect power for such task. Using UEFITool, you can now find many usiful information and te most important part extract `Lost_in_the_dark.efi`.
+Now that the time comes, you can choose what you prefer, but for me, **UEFITool** is the perfect power for such a task. Using UEFITool, you can now find many useful information and, most importantly, extract `Lost_in_the_dark.efi`.
 
 Upon receiving the `Lost_in_the_dark.efi` file, the first step was to perform a basic file type identification to understand its nature. Using the `file` command, it was determined that the provided file is an EFI application for x86-64 architecture:
 
@@ -62,7 +62,7 @@ Lost_in_the_dark.efi: MS-DOS executable PE32+ executable (EFI application) x86-6
 
 This information confirms that the file is a 64-bit Windows Portable Executable (PE) format, specifically designed to run within a UEFI (Unified Extensible Firmware Interface) environment. This implies that standard reverse engineering tools for PE files and x86-64 architecture would be applicable.
 
-now the second trick is binwalk round2 :) 
+Now the second trick is binwalk round2 :) 
 
 ```bash
 ubuntu@cyber_assassin:~ $ binwalk -e Lost_in_the_dark.efi
@@ -74,14 +74,14 @@ DECIMAL       HEXADECIMAL     DESCRIPTION
 8708          0x2204          Unix path: /home/Wolf/edk2/Build/MyPkg/DEBUG_GCC5/X64/MyPkg/Lost_in_the_dark/DEBUG/Lost_in_the_dark.dll
 ```
 
-The `binwalk` output indicated the presence of an AES S-Box and Inverse S-Box, which are lookup tables used in the Advanced Encryption Standard (AES) algorithm. This observation is consistent with the provided source code, which explicitly defines `sbox` and `rsbox` (inverse S-box) arrays for AES-128 implementation. More interestingly, it revealed a Unix path: `/home/Wolf/edk2/Build/MyPkg/DEBUG_GCC5/X64/MyPkg/Lost_in_the_dark/DEBUG/Lost_in_the_dark.dll`. This path suggests that the EFI module might have been built from an EDK II (EFI Development Kit II) project, and the `.dll` extension hints at a dynamically linked library, which is common for EFI modules.
+The `binwalk` output indicated the presence of an AES S-Box and Inverse S-Box, which are lookup tables used in the Advanced Encryption Standard (AES) algorithm. This observation is consistent with the provided pseudo code, which explicitly defines `sbox` and `rsbox` (inverse S-box) arrays for AES-128 implementation. More interestingly, it revealed a Unix path: `/home/Wolf/edk2/Build/MyPkg/DEBUG_GCC5/X64/MyPkg/Lost_in_the_dark/DEBUG/Lost_in_the_dark.dll`. This path suggests that the EFI module might have been built from an EDK II (EFI Development Kit II) project, and the `.dll` extension hints at a dynamically linked library, which is common for EFI modules.
 
 However, despite using the `-e` flag for extraction, `binwalk` did not create a new directory with extracted files. This could mean that the identified components are embedded directly within the main executable and not as separate, extractable files in a way `binwalk` typically handles. Therefore, direct disassembly of the `Lost_in_the_dark.efi` file was pursued.
 
 
 ### Disassembly and Reverse Engineering
 
-To analyze the EFI module's functionality, the `Lost_in_the_dark.efi` file was loaded into IDA.
+To analyse the EFI module's functionality, the `Lost_in_the_dark.efi` file was loaded into IDA.
 
 The disassembly view in IDA contains the assembly code of the EFI module. A preliminary review of the assembly code was performed by examining the first few hundred lines. The code appears to be standard x86-64 assembly, with various functions and data manipulations. The presence of `call` instructions indicates calls to other functions, which could be internal or external (UEFI services).
 
@@ -93,34 +93,34 @@ To uncover potentially hidden strings, the `strings` utility was used to extract
 strings Lost_in_the_dark.efi > Lost_in_the_dark.strings
 ```
 
-Reviewing the `Lost_in_the_dark.strings` file revealed several interesting entries, including various UEFI status codes (e.g., "Success", "Invalid Parameter", "Not Found"), and the previously identified Unix path: `/home/Wolf/edk2/Build/MyPkg/DEBUG_GCC5/X64/MyPkg/Lost_in_the_dark/DEBUG/Lost_in_the_dark.dll`. The string "you missed the important part, try again harder\n" was also found, which, as revealed by the source code, is the message printed by the application if the key part 2 is missing or if the decryption process is not fully completed by the user.
+Reviewing the `Lost_in_the_dark.strings` file revealed several interesting entries, including various UEFI status codes (e.g., "Success", "Invalid Parameter", "Not Found"), and the previously identified Unix path: `/home/Wolf/edk2/Build/MyPkg/DEBUG_GCC5/X64/MyPkg/Lost_in_the_dark/DEBUG/Lost_in_the_dark.dll`. The string "you missed the important part, try again harder\n" was also found, which, as revealed by the pseudo code, is the message printed by the application if the key part 2 is missing or if the decryption process is not fully completed by the user.
 
-With the source code as a guide, the disassembly analysis becomes more focused. We can now specifically look for the `EncryptedFlag` array, the `gKeyPart2VariableGuid` GUID, and the calls to `gBS->HandleProtocol` and `gRT->GetVariable`. The `EncryptedFlag` array, as defined in the source code, is a 128-byte array. In the disassembly, this array would appear as a block of initialized data. The `gKeyPart2VariableGuid` would also be present as a data structure in the `.data` section.
+With the pseudo code as a guide, the disassembly analysis becomes more focused. We can now specifically look for the `EncryptedFlag` array, the `gKeyPart2VariableGuid` GUID, and the calls to `gBS->HandleProtocol` and `gRT->GetVariable`. The `EncryptedFlag` array is a 128-byte array. In the disassembly, this array would appear as a block of initialised data. The `gKeyPart2VariableGuid` would also be present as a data structure in the `.data` section.
 
-The `CopyMem` calls, which are used to construct the `AesKey`, can be identified by their function signatures or by tracing the memory operations around the `AesKey` variable. The `AES128::AES128_ECB_decrypt` function, which is the core decryption routine, would correspond to a significant block of assembly code, likely containing loops and calls to the AES sub-functions (InvSubBytes, InvShiftRows, InvMixColumns, AddRoundKey, and KeyExpansion). The `binwalk` output's identification of AES S-Box and Inverse S-Box at specific offsets (0x1E60 and 0x1F60) directly correlates with the `sbox` and `rsbox` arrays in the source code, confirming the AES implementation.
+The `CopyMem` calls, which are used to construct the `AesKey`, can be identified by their function signatures or by tracing the memory operations around the `AesKey` variable. The `AES128::AES128_ECB_decrypt` function, which is the core decryption routine, would correspond to a significant block of assembly code, likely containing loops and calls to the AES sub-functions (InvSubBytes, InvShiftRows, InvMixColumns, AddRoundKey, and KeyExpansion). The `binwalk` output's identification of AES S-Box and Inverse S-Box at specific offsets (0x1E60 and 0x1F60) directly correlates with the `sbox` and `rsbox` arrays in the pseudo code, confirming the AES implementation.
 
-By cross-referencing the source code with the disassembly, we can precisely locate the `EncryptedFlag` data, the `gKeyPart2VariableGuid`, and the logic for key construction and decryption. This combined approach significantly simplifies the reverse engineering process, allowing for a more accurate understanding of the binary's functionality.
+By cross-referencing the pseudo code with the disassembly, we can precisely locate the `EncryptedFlag` data, the `gKeyPart2VariableGuid`, and the logic for key construction and decryption. This combined approach significantly simplifies the reverse engineering process, allowing for a more accurate understanding of the binary's functionality.
 
 
 ### Functionality Summary
 
 The module implements the AES-128 ECB decryption algorithm from scratch. This includes the S-box, inverse S-box, key expansion, and the various steps of the AES decryption process (InvSubBytes, InvShiftRows, InvMixColumns, and AddRoundKey).
 
-The `UefiMain` function serves as the entry point for the UEFI application. It contains an encrypted flag, `EncryptedFlag`, stored as a 128-byte array. The core of the challenge lies in reconstructing the 16-byte AES key used for decryption. The source code reveals that the key is constructed from two parts:
+The `UefiMain` function serves as the entry point for the UEFI application. It contains an encrypted flag, `EncryptedFlag`, stored as a 128-byte array. The core of the challenge lies in reconstructing the 16-byte AES key used for decryption. The code review reveals that the key is constructed from two parts:
 
 1.  **Key Part 1:** The first 8 bytes of the key are copied from the `FvFileName` field of the `MEDIA_FW_VOL_FILEPATH_DEVICE_PATH` structure. This structure is part of the loaded image protocol and contains information about the file path of the EFI module itself.
 
 2.  **Key Part 2:** The remaining 8 bytes of the key are retrieved from a UEFI variable named "KeyPart2". This variable is associated with a specific GUID: `{ 0x12345678, 0xabcd, 0xefab, { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 }}`.
 
-If the "KeyPart2" variable is not found, the application prints an error message and exits. Once both parts of the key are obtained, they are concatenated to form the complete 16-byte AES key. The application then proceeds to decrypt the `EncryptedFlag` in 16-byte blocks using the constructed key and the `AES128::AES128_ECB_decrypt` function. Finally, instead of printing the decrypted flag, the application prints the message: "you missed the important part, try again harder\n". This indicates that the flag is not directly displayed and must be extracted by other means, such as by debugging the application or by manually reconstructing the key and decrypting the flag.
+If the "KeyPart2" variable is not found, the application prints an error message and exits. Once both parts of the key are obtained, they are concatenated to form the complete 16-byte AES key. The application then proceeds to decrypt the `EncryptedFlag` in 16-byte blocks using the constructed key and the `AES128::AES128_ECB_decrypt` function. Finally, instead of printing the decrypted flag, the application prints the message: "You missed the important part, try again harder". This indicates that the flag is not directly displayed and must be extracted by other means, such as by debugging the application or by manually reconstructing the key and decrypting the flag.
 
 ### Challenge Solution and Flag Discovery
 
-With the insights gained from the source code, the challenge of finding the flag becomes a matter of extracting the necessary components from the binary and performing the decryption. The key steps are:
+With the insights gained from the code analysis, the challenge of finding the flag becomes a matter of extracting the necessary components from the binary and performing the decryption. The key steps are:
 
 ### Extracting Encrypted Flag
 
-The `EncryptedFlag` array is defined in the source code as a `UINT8` array of 128 bytes. In the disassembled `Lost_in_the_dark.efi` file, this array can be located in the data section. By examining the disassembly, specifically around the `UefiMain` function, we can identify the memory location where this array is stored. The values of the `EncryptedFlag` array are:
+The `EncryptedFlag` array is defined as a `UINT8` array of 128 bytes. In the disassembled `Lost_in_the_dark.efi` file, this array can be located in the data section. By examining the disassembly, specifically around the `UefiMain` function, we can identify the memory location where this array is stored. The values of the `EncryptedFlag` array are:
 
 ```c
 UINT8 EncryptedFlag[128] = {
@@ -142,15 +142,15 @@ UINT8 EncryptedFlag[128] = {
 
 ### Reconstructing the AES Key
 
-As identified from the source code, the 16-byte AES key is composed of two 8-byte parts:
+The 16-byte AES key is composed of two 8-byte parts:
 
 ### Key Part 1: From `FvFileName`
 
-The first 8 bytes of the key are derived from the `FvFileName` field of the `MEDIA_FW_VOL_FILEPATH_DEVICE_PATH` structure. This structure is part of the `LoadedImage` protocol, which describes the image that has been loaded into memory. The source code indicates `CopyMem(AesKey, (UINT8*)&((MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)LoadedImage->FilePath)->FvFileName, 8);`. This means the first 8 bytes of the key are taken directly from the `FvFileName` field of the loaded image's file path. This field, for EFI applications, often contains the name of the module itself, typically encoded in UCS-2 (UTF-16). The provided key values `0x5C, 0x00, 0x4C, 0x00, 0x6F, 0x00, 0x73, 0x00` correspond to the UCS-2 encoding of the string "\Lost". This is consistent with the challenge name "Lost in the Dark" and the typical naming conventions for EFI modules. Therefore, the first 8 bytes of the key are `0x5C, 0x00, 0x4C, 0x00, 0x6F, 0x00, 0x73, 0x00`.
+The first 8 bytes of the key are derived from the `FvFileName` field of the `MEDIA_FW_VOL_FILEPATH_DEVICE_PATH` structure. This structure is part of the `LoadedImage` protocol, which describes the image that has been loaded into memory. The pseudo code indicates `CopyMem(AesKey, (UINT8*)&((MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)LoadedImage->FilePath)->FvFileName, 8);`. This means the first 8 bytes of the key are taken directly from the `FvFileName` field of the loaded image's file path. This field, for EFI applications, often contains the name of the module itself, typically encoded in UCS-2 (UTF-16). The provided key values `0x5C, 0x00, 0x4C, 0x00, 0x6F, 0x00, 0x73, 0x00` correspond to the UCS-2 encoding of the string "\Lost". This is consistent with the challenge name "Lost in the Dark" and the typical naming conventions for EFI modules. Therefore, the first 8 bytes of the key are `0x5C, 0x00, 0x4C, 0x00, 0x6F, 0x00, 0x73, 0x00`.
 
 ### Key Part 2: From UEFI Variable
 
-The second 8 bytes of the key are retrieved from a UEFI variable named "KeyPart2" with the GUID `{ 0x12345678, 0xabcd, 0xefab, { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 }}`. To obtain this part of the key, one would typically need to set this UEFI variable in the target environment before running the EFI application. Since we have the source code, we know the exact GUID and variable name. For the challenge, this variable would need to be pre-set. A common way to set UEFI variables for challenges is through a custom UEFI shell script or by using tools that allow manipulation of UEFI variables. The correct values for the second 8 bytes of the key are `0x45, 0x7a, 0x69, 0x6f, 0x41, 0x75, 0x64, 0x69` (ASCII for 'EzioAudi').
+The second 8 bytes of the key are retrieved from a UEFI variable named "KeyPart2" with the GUID `{ 0x12345678, 0xabcd, 0xefab, { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 }}`. To obtain this part of the key, one would typically need to set this UEFI variable in the target environment before running the EFI application. We know now the exact GUID and variable name. For the challenge, this variable would need to be pre-set. A common way to set UEFI variables for challenges is through a custom UEFI shell script or by using tools that allow manipulation of UEFI variables. The correct values for the second 8 bytes of the key are `0x45, 0x7a, 0x69, 0x6f, 0x41, 0x75, 0x64, 0x69` (ASCII for 'EzioAudi').
 
 ### Constructed AES Key
 
@@ -160,7 +160,7 @@ Combining both parts, the full 16-byte AES key is:
 
 ### The Solution
 
-With all of this you can simply go use any public tool to solve standerd AES but for me i have wrote my own ***Crypt Helper***.
+With all of this, you can simply go use any public tool to solve standard AES, but for me, I have written my own ***Crypt Helper***.
 **Flag:** `ASCWG{Wh3re_0th3r_m3n_bl1ndly_f0ll0w_th3_truth_R3memb3r_noth1ng_15_tru3_W3_work_1n_th3_d@rk_to_s3rve_th3_l1ght}`
 
 
@@ -183,9 +183,9 @@ ubuntu@cyber_assassin:~ $ file marauders_map.exe
 marauders_map.exe: PE32+ executable (console) x86-64, for MS Windows
 ```
 
-This indicates that the binary is a 64-bit Windows executable. Upon trying to run it, this only asks the user to enter some spell to defeat the magical object humming before him, with some random trials found that only a 25-character spell will make the program print this message
+This indicates that the binary is a 64-bit Windows executable. Upon trying to run it, this only asks the user to enter some spell to defeat the magical object humming before him, with some random trials found that only a 25-character spell will make the program print this message.
 ```
-...The artifact glows for a moment, then fades.
+...The artefact glows for a moment, then fades.
 Mischief Managed!
 ``` 
 
@@ -213,7 +213,7 @@ In the assembly, this custom VM would be represented by:
 
 ### Memory Manipulation and the `MEMORY_MAP_SIZE`
 
-The program initialises a large block of memory (4096 bytes) and performs various operations on it based on the input spell. This memory block acts as the state of the custom VM. The disassembly shows that the program allocates a significant amount of memory on the stack or in the `.data` section, and then performs a series of reads and writes to this memory based on calculations involving the input characters and the instruction pointer. The modulo operations (`% MEMORY_MAP_SIZE`) in the source code would translate to `div` or `idiv` instructions in the assembly, which are used to calculate the offsets into this memory map.
+The program initialises a large block of memory (4096 bytes) and performs various operations on it based on the input spell. This memory block acts as the state of the custom VM. The disassembly shows that the program allocates a significant amount of memory on the stack or in the `.data` section, and then performs a series of reads and writes to this memory based on calculations involving the input characters and the instruction pointer. The modulo operations (`% MEMORY_MAP_SIZE`) in the pseudo code are translated to `div` or `idiv` instructions in the assembly, which are used to calculate the offsets into this memory map.
 
 By understanding these high-level concepts and how they are likely to be represented in assembly, we can approach the disassembly with a more structured and informed perspective, allowing us to reverse engineer the complex logic of the `perform_mischief` routine and uncover the flag.
 
@@ -238,16 +238,16 @@ The heart of this challenge lies within a complex function that processes the us
 
 *   **Main Loop:** A prominent loop structure iterates through each character of the user's input. This loop is controlled by an "instruction pointer" (a register or memory location) that tracks the current character being processed and the overall progress through the spell.
 *   **Character Dispatch:** Inside the main loop, a series of `cmp` (compare) instructions followed by conditional jumps (`je`, `jne`, etc.) or a jump table (using `jmp [register + offset*scale]`) are used to dispatch execution to different code blocks based on the value of the current input character. Each character effectively acts as an opcode, triggering a specific operation within the VM.
-*   **Memory Map Interaction:** The VM operates on a dedicated "memory map" – a large, initialized buffer (observed to be 4096 bytes in size). Many of the character-specific operations involve reading from, writing to, or swapping bytes within this memory map. The addresses within this map are calculated dynamically using arithmetic operations (e.g., multiplication, addition, and modulo operations) involving the current character's ASCII value, the instruction pointer, and the total length of the spell. These calculations are crucial for understanding how the input manipulates the internal state of the program.
+*   **Memory Map Interaction:** The VM operates on a dedicated "memory map" – a large, initialised buffer (observed to be 4096 bytes in size). Many of the character-specific operations involve reading from, writing to, or swapping bytes within this memory map. The addresses within this map are calculated dynamically using arithmetic operations (e.g., multiplication, addition, and modulo operations) involving the current character's ASCII value, the instruction pointer, and the total length of the spell. These calculations are crucial for understanding how the input manipulates the internal state of the program.
 
 For instance, certain character types might trigger XOR operations on specific memory locations, while others might cause byte swaps. The modulo operation (`% 4096`) ensures that all memory accesses remain within the bounds of the 4096-byte memory map, creating a cyclical addressing scheme. This intricate interaction between the input characters and the memory map is where the true "magic" of the challenge unfolds.
 
-### Initializing the Map: The Scattered Flag
+### Initialising the Map: The Scattered Flag
 
-Before the "Mischief Engine" begins processing the user's spell, the memory map is initialized. This initialization is not a simple zeroing out of memory. Instead, the disassembly reveals a two-step process:
+Before the "Mischief Engine" begins processing the user's spell, the memory map is initialised. This initialisation is not a simple zeroing out of memory. Instead, the disassembly reveals a two-step process:
 
-1.  **Patterned Initialization:** The memory map is initially populated with a predictable pattern. For example, each byte `memory[i]` might be set to `(i % 256) as u8`. This creates a known baseline state for the memory map.
-2.  **Scattered Data Injection:** Crucially, a set of encrypted bytes, representing the hidden flag, are then scattered across this initialized memory map. This is achieved by calculating specific `scatter_index` values (e.g., `(100 + i * 42) % MEMORY_MAP_SIZE`) and placing individual encrypted flag bytes at these calculated offsets. This scattering makes it impossible to simply dump the memory and find the flag; its pieces are distributed and interleaved with the patterned data.
+1.  **Patterned Initialisation:** The memory map is initially populated with a predictable pattern. For example, each byte `memory[i]` might be set to `(i % 256) as u8`. This creates a known baseline state for the memory map.
+2.  **Scattered Data Injection:** Crucially, a set of encrypted bytes, representing the hidden flag, is then scattered across this initialised memory map. This is achieved by calculating specific `scatter_index` values (e.g., `(100 + i * 42) % MEMORY_MAP_SIZE`) and placing individual encrypted flag bytes at these calculated offsets. This scattering makes it impossible to simply dump the memory and find the flag; its pieces are distributed and interleaved with the patterned data.
 
 This scattering mechanism means that the final flag is not contiguous in memory. To retrieve it, one must reverse the scattering process after the "Mischief Engine" has performed its operations. The success of the "spell" is determined by whether these scattered flag bytes are correctly transformed (decrypted) within the memory map.
 
@@ -278,9 +278,9 @@ The disassembly reveals a highly structured function that acts as a custom virtu
 
 ### Reconstructing the Spell and Unveiling the Flag
 
-By meticulously analyzing the assembly code and understanding the purpose of each character-driven operation, we can deduce the precise sequence of characters required to correctly manipulate the memory map and decrypt the flag. The key insight is that the initial state of the memory map contains the scattered, encrypted flag, and the "spell" acts as a series of instructions to reverse this process.
+By meticulously analysing the assembly code and understanding the purpose of each character-driven operation, we can deduce the precise sequence of characters required to correctly manipulate the memory map and decrypt the flag. The key insight is that the initial state of the memory map contains the scattered, encrypted flag, and the "spell" acts as a series of instructions to reverse this process.
 
-Given the thematic context of the challenge, the phrase "It's_leviOsa_not_levioSA!" immediately stands out as a strong candidate for the correct spell. Let's analyze how this spell aligns with the observed VM operations:
+Given the thematic context of the challenge, the phrase "It's_leviOsa_not_levioSA!" immediately stands out as a strong candidate for the correct spell. Let's analyse how this spell aligns with the observed VM operations:
 
 *   **Length:** The spell "It's_leviOsa_not_levioSA!" has exactly 25 characters, satisfying the initial length check.
 *   **Character Types:** It contains a mix of uppercase, lowercase, and special characters, each triggering specific operations within the VM.
@@ -292,7 +292,7 @@ When this precise spell is provided, the "Mischief Engine" will execute the corr
 
 **The Correct Spell:** `It's_leviOsa_not_levioSA!`
 
-Upon successfully casting this spell, the program will decrypt and arrange the flag in the memory, then the memory will be destroyed. Breaking at the rigth place you will find the flag sparkling in front of you.
+Upon successfully casting this spell, the program will decrypt and arrange the flag in the memory, and then the memory will be destroyed. Breaking at the right place, you will find the flag sparkling in front of you.
 
 **Flag:** `ASCWG{H0w_d@r3_you_use_my_sp3!ls_aga1nst_m3_Potter_Yes_I_@m_the_H@lf_Bl00d_Prince}`
 
@@ -302,6 +302,7 @@ Upon successfully casting this spell, the program will decrypt and arrange the f
 
 #### Written by
 ## *Karim Gomaa*
+
 
 
 
