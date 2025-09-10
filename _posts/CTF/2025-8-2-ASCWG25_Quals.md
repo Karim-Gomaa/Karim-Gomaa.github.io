@@ -10,7 +10,7 @@ categories:
 toc: true
 ---
 
-Hello guys, I’ve had the honor to write the challenges for Arab Security Cyber WarGames (ASCWG). This is the writeup for the Qualifications round’s challenges. Let’s just jump right in.
+Hello guys, I’ve had the honour to write the challenges for Arab Security Cyber WarGames (ASCWG). This is the write-up for the Qualifications round’s challenges. Let’s just jump right in.
 
 # The Leaky Configuration
 
@@ -28,7 +28,7 @@ The challenge file is a 64-bit PE32+ executable for Windows. Initial attempts to
 
 Loading the executable into a disassembler like IDA shows that the `main` function checks for the correct number of command-line arguments before proceeding. The primary logic involves over 40 functions that manipulate the user's input flag. Analysis indicated that the most critical operations occur at runtime, specifically within the final function call, `sub_403930`.
 
-An attempt to set breakpoints at the beginning of `main` and at `sub_403930` failed, with the program terminating prematurely. This behavior pointed to an anti-debugging check occurring before the `main` function is reached. The likely culprits were a TLS (Thread Local Storage) callback or an `initterm` function calling `exit()`.
+An attempt to set breakpoints at the beginning of `main` and at `sub_403930` failed, with the program terminating prematurely. This behaviour pointed to an anti-debugging check occurring before the `main` function is reached. The likely culprits were a TLS (Thread Local Storage) callback or an `initterm` function calling `exit()`.
 
 To locate the anti-debugging code, cross-references to the `exit` function were examined.
 
@@ -55,7 +55,7 @@ sub_40B900 endp
 
 ### Deconstructing the Encryption Routine
 
-With the anti-debugger check bypassed, the core function `sub_403930` could be analyzed. This function is responsible for a multi-stage encryption process.
+With the anti-debugger check bypassed, the core function `sub_403930` could be analysed. This function is responsible for a multi-stage encryption process.
 
 The process unfolds as follows:
 
@@ -93,7 +93,7 @@ By reversing this entire process—inverting the final transformation, decryptin
 
 #### <span style="color: red;">[challenge link](https://drive.google.com/file/d/1u0o0jOuVHoF37y6_RmMmb9_RTX43IGmo/view?usp=drive_link)</span>
 
-I would like to mention that this challenge is insanely difficult and need a skilled player to solve, in this walk through I am not going to solve the challenge, I will just provide the main idea, but you will need to get your hands dirty to fully solve the challenge.
+I would like to mention that this challenge is insanely difficult and needs a skilled player to solve. In this walk-through, I am not going to solve the challenge; I will just provide the main idea, but you will need to get your hands dirty to fully solve the challenge.
 
 ### Scenario
 
@@ -103,19 +103,19 @@ After an incident, the DFIR team recovered a file from the hard disk; they belie
 
 ### Solution Guide
 
-Nightmare is recognized as `data`; file utility can’t find out its arch.
+Nightmare is recognised as `data`; the file utility can’t find out its arch.
 
-That’s logic as the file supposed to be retrieved from memory dump after DF investigation and the file is corrupted.
+That’s logic, as the file is supposed to be retrieved from a memory dump after DF investigation, and the file is corrupted.
 
 The only way to deal with the file is static analysis.
 
-Again, I will choose IDA to disassemble the file. On examining strings there are 2 useful strings, first one “DOS mode.\r\r\n$” which means this can be executable windows binary, second one “IsDebuggerPresent” which can lead to main function.
+Again, I will choose IDA to disassemble the file. On examining strings, there are 2 useful strings, the first one “DOS mode.\r\r\n$” which means this can be an executable Windows binary, the second one “IsDebuggerPresent” which can lead to the main function.
 
-Trying to trace the file, there is no imports, exports or cross-references so no solution except manually examining each function.
+Trying to trace the file, there are no imports, exports or cross-references, so no solution except manually examining each function.
 
-Spending enough time analyzing the code you will find that only 10 ~ 15 function is important. On analyzing the file a skillful reverse engineer and experienced malware analysts would recognize that the file is performing some form of API Hashing. At this point, you remember the flag format `{IP:Port_FilePath}` so you think that you need to resolve all Hashes in the file and determine which API is useful for your case.
+Spending enough time analysing the code, you will find that only 10 ~ 15 functions are important. On analysing the file, a skilful reverse engineer and experienced malware analyst would recognise that the file is performing some form of API Hashing. At this point, you remember the flag format `{IP: Port_FilePath}`, so you think that you need to resolve all Hashes in the file and determine which API is useful for your case.
 
-The first trick is that you need to reimplement the whole resolution function as the algorithm is not reversible. The second one is that you must encrypt all APIs At `C:\Windows\System32` directory as you can’t just try to traverse the PEB and find the loaded module, this way will not give you any network API hash.
+The first trick is that you need to reimplement the whole resolution function, as the algorithm is not reversible. The second one is that you must encrypt all APIs in the `C:\Windows\System32` directory, as you can’t just try to traverse the PEB and find the loaded module; this way will not give you any network API hash.
 
 The final stage is just to locate the target hashes:
 
@@ -127,9 +127,9 @@ The final stage is just to locate the target hashes:
 - `0xa5854b25` – CreateFileW  
   *`And this will take the file path as an argument.`*
 
-The last thing to note is that all arguments are obfuscated using simple xor operation (four characters length hard-coded key) and sum operation.
+The last thing to note is that all arguments are obfuscated using a simple XOR operation (four-character-length hard-coded key) and a sum operation.
 
-Note that hashing algorithm and Deobfuscation function are hard coded you just need to locate and deeply understand them and then reimplement them.
+Note that the hashing algorithm and Deobfuscation function are hard-coded; you just need to locate and deeply understand them and then reimplement them.
 
 ### The Solution
 **Flag:** `ASCWG{198.4.109.11:5555_C:\Users<User>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\}`
@@ -139,6 +139,7 @@ Note that hashing algorithm and Deobfuscation function are hard coded you just n
 
 #### Written by
 ## *Karim Gomaa*
+
 
 
 
