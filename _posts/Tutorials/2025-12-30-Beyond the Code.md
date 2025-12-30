@@ -95,7 +95,7 @@ Understanding how one event triggers another is key to cultural literacy:
 ## Essential Resources:
 - **Shadow Brokers Explained (Krebs)**: <span style="color: red;">[Shadow Brokers Released More NSA Hacking Tools](https://krebsonsecurity.com/2017/04/shadow-brokers-released-more-nsa-hacking-tools/)</span>
 - **Vault 7 Overview (WikiLeaks)**: <span style="color: red;">[CIA Vault 7 Documents](https://wikileaks.org/ciav7p1/)</span>
-- **NotPetya Analysis (Wired)**: <span style="color: red;">[The Untold Story of NotPetya](https://www.wired.com/story/notpetya-cyberattack-ukraine-russia-code-crashed-the-world/)</span>
+- **NotPetya Analysis (Wired)**
 - **SolarWinds Breakdown (CISA)**: <span style="color: red;">[Advanced Persistent Threat Compromises Government Agencies](https://www.cisa.gov/news-events/alerts/aa20-352a)</span>
 - **Book**: *Sandworm* by Andy Greenberg – A deep dive into the Russian hackers who launched NotPetya.
 
@@ -126,7 +126,7 @@ Don't just read their CVs. Read about the problems they faced and the impact the
 
 | **Figure** | **Why they matter** | **Key Resources** |
 | :--- | :--- | :--- |
-| **Edward Snowden** | Exposed Mass Surveillance; changed the world's view on encryption; made **Privacy** a public issue. | <span style="color: red;">[Permanent Record Book Site](https://www.permanentrecordbook.com/)</span> |
+| **Edward Snowden** | Exposed Mass Surveillance; changed the world's view on encryption; made **Privacy** a public issue. |Permanent Record Book Site |
 | **Julian Assange** | WikiLeaks; linked leaks to **Geopolitics**; why governments fear transparency. | Read about the *Leaks vs Journalism* debate. |
 | **Kevin Mitnick** | The legend of **Social Engineering**. | <span style="color: red;">[Mitnick Security Site](https://mitnicksecurity.com/)</span> |
 | **Bruce Schneier** | Leading voice on **Cryptography** and **Security as a System**; focuses on people, not just algorithms. | <span style="color: red;">[Schneier on Security Blog](https://www.schneier.com/)</span> |
@@ -163,4 +163,5 @@ Cybersecurity literacy is what separates a tool user from a strategist.
 you understand the threat.**
 
 #### Written by
+
 ## *Karim Gomaa*
